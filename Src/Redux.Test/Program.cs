@@ -10,11 +10,6 @@ namespace Redux.Test
             Adapter adapter = new();
 
 
-            Console.WriteLine(adapter.Description);
-            Console.WriteLine(adapter.DeviceName);
-            Console.WriteLine("----");
-            foreach (var item in adapter.InstanceExtensionsNames) Console.WriteLine(item);
-
         }
     }
 }
