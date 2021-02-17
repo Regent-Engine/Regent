@@ -2,28 +2,28 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Redux.Base
+namespace Redux
 {
     /// <inheritdoc/>
-    public class RegentLocator : IRegentDependencyResolver
+    public class ReduxLocator : IReduxDependencyResolver
     {
         /// <summary>
-        /// Gets the <see cref="RegentLocator"/> current instance.
+        /// Gets the <see cref="ReduxLocator"/> current instance.
         /// </summary>
-        public static IRegentDependencyResolver Current
+        public static IReduxDependencyResolver Current
         {
             get;
             private set;
         }
 
-        static RegentLocator()
+        static ReduxLocator()
         {
-            Current = new RegentLocator();
+            Current = new ReduxLocator();
         }
 
         private Dictionary<object, object> cache = new();
 
-        private RegentLocator() { }
+        private ReduxLocator() { }
 
         /// <inheritdoc/>
         public T? GetService<T>() where T : class
@@ -39,7 +39,7 @@ namespace Redux.Base
         }
 
         /// <inheritdoc/>
-        public IRegentDependencyResolver RegisterService<T>(T t) where T : class
+        public IReduxDependencyResolver RegisterService<T>(T t) where T : class
         {
             if (!cache.ContainsKey(typeof(T)))
             {

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Redux.Base
+namespace Redux
 {
     /// <summary>
     /// Resolves dependecies.
     /// </summary>
-    public interface IRegentDependencyResolver
+    public interface IReduxDependencyResolver
     {
         /// <summary>
         /// Gets a Service.
@@ -22,6 +22,6 @@ namespace Redux.Base
         /// <typeparam name="T">The type of the service to register.</typeparam>
         /// <param name="t">The service to register.</param>
         /// <returns>Returns itself.</returns>
-        public IRegentDependencyResolver RegisterService<T>(T t) where T : class;
+        public IReduxDependencyResolver RegisterService<T>(T t) where T : class;
     }
 }
