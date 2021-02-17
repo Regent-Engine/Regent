@@ -60,6 +60,8 @@ namespace Redux.Vulkan
 
         public bool SupportsVulkan11Instance { get; private set; }
         public bool SupportsVulkan11Device { get; private set; }
+        public bool SupportsPhysicalDeviceProperties2 { get; private set; }
+        public bool SupportsWin32Surface { get; private set; }
 
         public bool IsSupported()
         {
@@ -137,7 +139,7 @@ namespace Redux.Vulkan
                 if (instance_extensions_names.Contains("VK_KHR_win32_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_win32_surface");
-                    //SupportsWin32Surface = true;
+                    SupportsWin32Surface = true;
                 }
             }
 
@@ -186,7 +188,7 @@ namespace Redux.Vulkan
             if (instance_extensions_names.Contains("VK_KHR_get_physical_device_properties2"))
             {
                 InstanceExtensionsNames.Add("VK_KHR_get_physical_device_properties2");
-                //SupportsPhysicalDeviceProperties2 = true;
+                SupportsPhysicalDeviceProperties2 = true;
             }
         }
 
