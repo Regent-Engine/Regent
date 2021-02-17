@@ -1,7 +1,7 @@
 ﻿using System;
-using Regent.Vulkan;
+using Redux.Vulkan;
 
-namespace Regent.Test
+namespace Redux.Test
 {
     class Program
     {

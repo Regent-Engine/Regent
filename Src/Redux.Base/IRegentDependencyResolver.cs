@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Regent.Base
+namespace Redux.Base
 {
     /// <summary>
     /// Resolves dependecies.

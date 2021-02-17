@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Regent.Vulkan
+namespace Redux.Vulkan
 {
     public static class Interop
     {

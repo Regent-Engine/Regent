@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
-namespace Regent.Vulkan
+namespace Redux.Vulkan
 {
     public unsafe class Adapter
     {

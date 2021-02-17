@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Regent.Vulkan", "Regent.Vulkan\Regent.Vulkan.csproj", "{5B33DE32-273F-4946-8F58-FD5C5336C618}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Vulkan", "Redux.Vulkan\Redux.Vulkan.csproj", "{5B33DE32-273F-4946-8F58-FD5C5336C618}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Regent.Test", "Regent.Test\Regent.Test.csproj", "{2D86271B-E044-45FF-9CCC-9653822FACC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Test", "Redux.Test\Redux.Test.csproj", "{2D86271B-E044-45FF-9CCC-9653822FACC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Regent.Base", "Regent.Base\Regent.Base.csproj", "{8D3CA902-65A0-47C8-9DF2-5372B97C628B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Base", "Redux.Base\Redux.Base.csproj", "{8D3CA902-65A0-47C8-9DF2-5372B97C628B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F1CA6466-BE26-4D27-9386-8722950D3395}"
 	ProjectSection(SolutionItems) = preProject
