@@ -5,4 +5,4 @@
 
 <img align="right" width="160px" height="160px" src="assets-src/Regent.png">
 
-Redux-Engine is a Game Engine.
+Redux-Engine is a Game Engine in Vulkan.
