@@ -555,7 +555,7 @@ namespace Redux.Vulkan
 
 
 
-        public void WaitIdle()
+        public void WaitForGPU()
         {
             //vkQueueWaitIdle(nativeCommandQueue);
             vkDeviceWaitIdle(handle);

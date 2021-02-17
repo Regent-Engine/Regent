@@ -59,7 +59,7 @@ namespace Redux.Vulkan
         public List<string> ValidationLayer { get; private set; } = new();
 
         public bool SupportsVulkan11Instance { get; private set; }
-
+        public bool SupportsVulkan11Device { get; private set; }
 
         public bool IsSupported()
         {
@@ -102,8 +102,8 @@ namespace Redux.Vulkan
             SupportsVulkan11Instance = vkEnumerateInstanceVersion() >= VkVersion.Version_1_1;
 
 
-            //if (device_properties.apiVersion >= VkVersion.Version_1_1)
-            //    SupportsVulkan11Device = SupportsVulkan11Instance;
+            if (device_properties.apiVersion >= VkVersion.Version_1_1)
+                SupportsVulkan11Device = SupportsVulkan11Instance;
 
         }
 
