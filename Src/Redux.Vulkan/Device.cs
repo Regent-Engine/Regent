@@ -284,27 +284,27 @@ namespace Redux.Vulkan
             };
 
 
-            //if (NativeAdapter.SupportsVulkan11Device && NativeAdapter.SupportsVulkan11Instance)
-            //{
-            //    vkGetPhysicalDeviceFeatures2(NativeAdapter.handle, out features);
-            //}
-            //else if (NativeAdapter.SupportsPhysicalDeviceProperties2)
-            //{
-            //    vkGetPhysicalDeviceFeatures2KHR(NativeAdapter.handle, out features);
-            //}
-            //else
-            //{
-            //    vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out features.features);
-            //}
+            if (NativeAdapter.SupportsVulkan11Device && NativeAdapter.SupportsVulkan11Instance)
+            {
+                vkGetPhysicalDeviceFeatures2(NativeAdapter.handle, out features);
+            }
+            else if (NativeAdapter.SupportsPhysicalDeviceProperties2)
+            {
+                vkGetPhysicalDeviceFeatures2KHR(NativeAdapter.handle, out features);
+            }
+            else
+            {
+                vkGetPhysicalDeviceFeatures(NativeAdapter.handle, out features.features);
+            }
 
-            //if (NativeAdapter.SupportsPhysicalDeviceProperties2)
-            //{
-            //    deviceCreateInfo.pNext = &features;
-            //}
-            //else
-            //{
-            //    deviceCreateInfo.pEnabledFeatures = &features.features;
-            //}
+            if (NativeAdapter.SupportsPhysicalDeviceProperties2)
+            {
+                deviceCreateInfo.pNext = &features;
+            }
+            else
+            {
+                deviceCreateInfo.pEnabledFeatures = &features.features;
+            }
 
 
 
@@ -325,10 +325,10 @@ namespace Redux.Vulkan
 
 
 
-            //if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
-            //{
-            //    vkGetPhysicalDeviceProperties2(NativeAdapter.handle, out props);
-            //}
+            if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
+            {
+                vkGetPhysicalDeviceProperties2(NativeAdapter.handle, out props);
+            }
 
             if (DeviceExtensionsNames.Any())
             {
