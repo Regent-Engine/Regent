@@ -13,6 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Redux.Vulkan\Redux.Vulkan.csproj" />
     <ProjectReference Include="..\Redux.Core\Redux.Core.csproj" />
+    <ProjectReference Include="..\Redux.Desktop\Redux.Desktop.csproj" />
+    
   </ItemGroup>
 
 </Project>
