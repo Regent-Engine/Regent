@@ -8,7 +8,7 @@ namespace Redux.Test
         static void Main(string[] args)
         {
             Adapter adapter = new();
-
+            Device device = new(adapter);
 
         }
     }
