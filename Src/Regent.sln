@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Regent.Vulkan", "Regent.Vulkan\Regent.Vulkan.csproj", "{5B33DE32-273F-4946-8F58-FD5C5336C618}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Regent.Test", "Regent.Test\Regent.Test.csproj", "{2D86271B-E044-45FF-9CCC-9653822FACC3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B33DE32-273F-4946-8F58-FD5C5336C618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B33DE32-273F-4946-8F58-FD5C5336C618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B33DE32-273F-4946-8F58-FD5C5336C618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B33DE32-273F-4946-8F58-FD5C5336C618}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D86271B-E044-45FF-9CCC-9653822FACC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D86271B-E044-45FF-9CCC-9653822FACC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D86271B-E044-45FF-9CCC-9653822FACC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D86271B-E044-45FF-9CCC-9653822FACC3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49123765-3538-49AD-99EF-CDFA83DFBBCD}
+	EndGlobalSection
+EndGlobal
