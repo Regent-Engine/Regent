@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Redux.Vulkan\Redux.Vulkan.csproj" />
+    <ProjectReference Include="..\Redux.Core\Redux.Core.csproj" />
   </ItemGroup>
 
 </Project>

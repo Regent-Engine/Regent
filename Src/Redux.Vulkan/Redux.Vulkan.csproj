@@ -20,5 +20,9 @@
     <PackageReference Include="Vortice.Vulkan" Version="1.2.170" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Redux.Core\Redux.Core.csproj" />
+  </ItemGroup>
+
 
 </Project>

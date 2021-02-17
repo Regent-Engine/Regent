@@ -61,12 +61,11 @@ namespace Redux.Vulkan
 
         public Adapter NativeAdapter { get; set; }
         //public PresentationParameters NativeParameters { get; set; }
-        //public CommandBuffer NativeCommand { get; set; }
+        public CommandBuffer NativeCommand { get; set; }
         public uint GraphicsFamily { get; private set; }
         public uint ComputeFamily { get; private set; }
         public uint TransferFamily { get; private set; }
         public List<string> DeviceExtensionsNames { get; private set; } = new();
-
 
         public void Recreate()
         {
@@ -119,7 +118,7 @@ namespace Redux.Vulkan
             command_buffer_secondary = CreateCommandBufferSecondary();
 
 
-            //NativeCommand = new(this, CommandBufferType.AsyncGraphics);
+            NativeCommand = new(this, CommandBufferType.AsyncGraphics);
 
 
 
@@ -550,7 +549,20 @@ namespace Redux.Vulkan
 
 
 
+        public TDelegate GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
+        {
+            IntPtr funcPtr = vkGetInstanceProcAddr(NativeAdapter.instance, Interop.ToPointer(name));
 
+            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
+        }
+
+
+        public TDelegate GetDeviceProcAddr<TDelegate>(string name) where TDelegate : class
+        {
+            IntPtr funcPtr = vkGetDeviceProcAddr(handle, Interop.ToPointer(name));
+
+            return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
+        }
 
 
 
