@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Media", "Redux.Media\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Core", "Redux.Core\Redux.Core.csproj", "{2206AF44-68CC-4CA5-9683-46067D378B52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redux.Desktop", "Redux.Desktop\Redux.Desktop.csproj", "{31C1C29F-4C73-4058-91E8-892B945DDD99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Desktop", "Redux.Desktop\Redux.Desktop.csproj", "{31C1C29F-4C73-4058-91E8-892B945DDD99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
