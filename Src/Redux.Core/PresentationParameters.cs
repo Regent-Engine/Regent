@@ -8,7 +8,10 @@ namespace Redux.Core
 {
     public class PresentationParameters
     {
+        public PresentationParameters()
+        {
 
+        }
         public PresentationParameters(int width, int height)
         {
             Width = width;

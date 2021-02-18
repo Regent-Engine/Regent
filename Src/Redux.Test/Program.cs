@@ -12,10 +12,15 @@ namespace Redux.Test
 
             Adapter adapter = new();
             Device device = new(adapter);
-            SwapChain swapChain = new(device, new PresentationParameters(window.Width, window.Height)
+
+            PresentationParameters parameters = new()
             {
+                Width = window.Width >> 1,
+                Height = window.Height >> 1,
                 SwapchainSource = window.SwapchainWin32
-            });
+            };
+
+            SwapChain swapChain = new(device, parameters);
 
             Framebuffer framebuffer = new(swapChain);
             CommandBuffer commandBuffer = new CommandBuffer(device, CommandBufferType.AsyncGraphics);
@@ -23,7 +28,6 @@ namespace Redux.Test
             window?.Show();
             window.RenderLoop(() => 
             {
-
                 device.WaitForGPU();
 
                 commandBuffer.Begin(swapChain);
