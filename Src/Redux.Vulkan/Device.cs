@@ -1,12 +1,21 @@
-﻿using System;
+﻿/* 
+    Copyright (c) 2020 - 2021 Redux Engine. All Rights Reserved. https://github.com/Redux-Engine
+    Copyright (c) Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+
+    This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+using Redux.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Vortice.Mathematics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Redux.Vulkan
 {
-    public unsafe class Device
+    public unsafe class Device : IDisposable
     {
         internal VkDevice handle;
         internal VkPhysicalDeviceMemoryProperties _memoryProperties;
@@ -39,20 +48,18 @@ namespace Redux.Vulkan
         internal uint timeline_fence_transfer = 0;
 
 
-        //internal DescriptorPool _descriptorPoolManager_0;
+        internal DescriptorPool _descriptorPoolManager_0;
+        internal DescriptorPool _descriptorPoolManager_1;
 
 
         internal VkPhysicalDeviceProperties device_properties;
 
-        internal VkPhysicalDeviceFeatures enabled_features;
-
-        internal VkPhysicalDeviceDriverProperties driver_properties;
 
         public Device(Adapter adapter)
         {
             NativeAdapter = adapter;
 
-            //NativeParameters = NativeAdapter.Parameters;
+            NativeParameters = NativeAdapter.Parameters;
 
 
             Recreate();
@@ -60,12 +67,13 @@ namespace Redux.Vulkan
 
 
         public Adapter NativeAdapter { get; set; }
-        //public PresentationParameters NativeParameters { get; set; }
+        public PresentationParameters NativeParameters { get; set; }
         public CommandBuffer NativeCommand { get; set; }
         public uint GraphicsFamily { get; private set; }
         public uint ComputeFamily { get; private set; }
         public uint TransferFamily { get; private set; }
         public List<string> DeviceExtensionsNames { get; private set; } = new();
+
 
         public void Recreate()
         {
@@ -122,7 +130,7 @@ namespace Redux.Vulkan
 
 
 
-            //_descriptorPoolManager_0 = new(this);
+            _descriptorPoolManager_0 = new(this);
 
             //_descriptorPoolManager_1 = _descriptorPoolManager_0;
             //_descriptorPoolManager_1.HeapPool.Reset();
@@ -265,9 +273,12 @@ namespace Redux.Vulkan
                 sType = VkStructureType.PhysicalDeviceFeatures2,
             };
 
+
+            bool has_pdf2 = NativeAdapter.SupportsPhysicalDeviceProperties2 || (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device);
+
+
             void** ppNext = &features.pNext;
 
-          
 
             if (NativeAdapter.device_extensions_names.Contains("VK_KHR_swapchain"))
             {
@@ -314,14 +325,8 @@ namespace Redux.Vulkan
                 sType = VkStructureType.PhysicalDeviceProperties2,
             };
 
-            
-
 
             ppNext = &props.pNext;
-
-
-
-
 
 
             if (NativeAdapter.SupportsVulkan11Instance && NativeAdapter.SupportsVulkan11Device)
@@ -548,6 +553,55 @@ namespace Redux.Vulkan
 
 
 
+        internal VkSurfaceFormatKHR ChooseSwapSurfaceFormat(VkSurfaceFormatKHR[] formats)
+        {
+            if (formats.Length is 1 && formats.First().format is VkFormat.Undefined)
+            {
+                return new()
+                {
+                    format = VkFormat.B8G8R8A8UNorm,
+                    colorSpace = VkColorSpaceKHR.SrgbNonLinear
+                };
+            }
+
+            foreach (VkSurfaceFormatKHR availableFormat in formats)
+            {
+                if (availableFormat.format is VkFormat.B8G8R8A8UNorm && availableFormat.colorSpace is VkColorSpaceKHR.SrgbNonLinear)
+                {
+                    return availableFormat;
+                }
+            }
+
+            return formats.First();
+        }
+
+        internal VkPresentModeKHR ChooseSwapPresentMode(VkPresentModeKHR[] presentModes)
+        {
+            //VkPresentModeKHR bestMode = VkPresentModeKHR.FifoKHR;
+
+            foreach (VkPresentModeKHR availablePresentMode in presentModes)
+            {
+                if (availablePresentMode is VkPresentModeKHR.Mailbox)
+                {
+                    return availablePresentMode; // MailboxKHR
+                }
+                else if (availablePresentMode is VkPresentModeKHR.Immediate)
+                {
+                    return availablePresentMode; // ImmediateKHR;
+                }
+            }
+
+            return VkPresentModeKHR.Immediate;
+        }
+
+
+
+        public void WaitIdle()
+        {
+            //vkQueueWaitIdle(nativeCommandQueue);
+            vkDeviceWaitIdle(handle);
+        }
+
 
         public TDelegate GetInstanceProcAddr<TDelegate>(string name) where TDelegate : class
         {
@@ -563,20 +617,10 @@ namespace Redux.Vulkan
 
             return funcPtr != IntPtr.Zero ? Interop.GetDelegateForFunctionPointer<TDelegate>(funcPtr) : null;
         }
-
-
-
-
-        public void WaitForGPU()
-        {
-            //vkQueueWaitIdle(nativeCommandQueue);
-            vkDeviceWaitIdle(handle);
-        }
-
-
         public void Dispose()
         {
 
         }
     }
+
 }

@@ -1,4 +1,12 @@
-﻿using System.Linq;
+﻿/* 
+    Copyright (c) 2020 - 2021 Redux Engine. All Rights Reserved. https://github.com/Redux-Engine
+    Copyright (c) Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+
+    This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+
+using System.Linq;
 using Vortice.Mathematics;
 using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
@@ -6,19 +14,9 @@ using static Vortice.Vulkan.Vulkan;
 namespace Redux.Vulkan
 {
 
-    public enum CommandBufferType
-    {
-        Generic,
 
-        AsyncGraphics,
-
-        AsyncCompute,
-
-        AsyncTransfer,
-
-        Count
-    }
-    public unsafe class CommandBuffer : Resource
+    //TODO: CommandBufferType
+    public unsafe class CommandBuffer : GraphicsResource
     {
 
         internal uint imageIndex;
@@ -76,26 +74,6 @@ namespace Redux.Vulkan
 
         }
 
-        //public CommandBufferType GetPhysicalQueueType(CommandBufferType type)
-        //{
-        //    if (type != CommandBufferType.AsyncGraphics)
-        //    {
-        //        return type;
-        //    }
-
-        //    else
-        //    {
-        //        if (NativeDevice.GraphicsFamily == NativeDevice.ComputeFamily && NativeDevice.queueFamilyProperties /*graphics_queue*/ != NativeDevice.queueFamilyProperties /*compute_queue*/)
-        //        {
-        //            return CommandBufferType.AsyncCompute;
-        //        }
-        //        else
-        //        {
-        //            return CommandBufferType.Generic;
-        //        }
-        //    }
-        //}
-
         public void Begin(SwapChain swapChain)
         {
             // By setting timeout to UINT64_MAX we will always wait until the next image has been acquired or an actual error is thrown
@@ -130,9 +108,9 @@ namespace Redux.Vulkan
         {
             // Set clear values for all framebuffer attachments with loadOp set to clear
             // We use two attachments (color and depth) that are cleared at the start of the subpass and as such we need to set clear values for both
-            VkClearValue* clearValues = stackalloc VkClearValue[1];
+            VkClearValue* clearValues = stackalloc VkClearValue[2];
             clearValues[0].color = new(r, g, b, a);
-            //clearValues[1].depthStencil = new(1, 0);
+            clearValues[1].depthStencil = new(1, 0);
 
             int h = framebuffer.SwapChain.Parameters.Height;
             int w = framebuffer.SwapChain.Parameters.Width;
@@ -145,7 +123,7 @@ namespace Redux.Vulkan
                 renderArea = new(x, y, w, h),
 
                 renderPass = framebuffer.renderPass,
-                clearValueCount = 1,
+                clearValueCount = 2,
                 pClearValues = clearValues,
                 framebuffer = framebuffer.framebuffers[imageIndex], // Set target frame buffer
             };
@@ -172,11 +150,15 @@ namespace Redux.Vulkan
 
 
 
-        
 
 
+        public void SetGraphicPipeline(GraphicsPipelineState pipelineState)
+        {
+            vkCmdBindPipeline(handle, VkPipelineBindPoint.Graphics, pipelineState.graphicsPipeline);
 
-
+            if (pipelineState.DescriptorSet.resourceInfos.Any())
+                BindDescriptorSets(pipelineState.DescriptorSet);
+        }
 
 
 
@@ -199,6 +181,38 @@ namespace Redux.Vulkan
             vkCmdSetViewport(handle, 0, 1, &Viewport);
         }
 
+        public void SetVertexBuffer(Buffer buffer, ulong offsets = 0)
+        {
+            fixed (VkBuffer* bufferptr = &buffer.handle)
+            {
+                vkCmdBindVertexBuffers(handle, 0, 1, bufferptr, &offsets);
+            }
+        }
+
+        public void SetVertexBuffers(Buffer[] buffers, ulong offsets = 0)
+        {
+            VkBuffer* buffer = stackalloc VkBuffer[buffers.Length];
+
+            for (int i = 0; i < buffers.Length; i++)
+            {
+                buffer[i] = buffers[i].handle;
+            }
+
+            //fixed(VkBuffer* bufferptr = &buffers[0].Handle)
+            //{
+
+            //}
+
+            vkCmdBindVertexBuffers(handle, 0, 1, buffer, &offsets);
+        }
+
+        public void SetIndexBuffer(Buffer buffer, ulong offsets = 0, IndexType indexType = IndexType.Uint32)
+        {
+            if (buffer.handle != VkBuffer.Null)
+            {
+                vkCmdBindIndexBuffer(handle, buffer.handle, offsets, (VkIndexType)indexType);
+            }
+        }
 
         public void Draw(int vertexCount, int instanceCount, int firstVertex, int firstInstance)
         {
@@ -210,7 +224,10 @@ namespace Redux.Vulkan
             vkCmdDrawIndexed(handle, (uint)indexCount, (uint)instanceCount, (uint)firstIndex, vertexOffset, (uint)firstInstance);
         }
 
-
+        public void PushConstant<T>(GraphicsPipelineState pipelineLayout, ShaderStage stageFlags, T data, uint offset = 0) where T : unmanaged
+        {
+            vkCmdPushConstants(handle, pipelineLayout._pipelineLayout, stageFlags.StageToVkShaderStageFlags(), offset, (uint)Interop.SizeOf<T>(), (void*)&data /*Interop.AllocToPointer<T>(ref data)*/);
+        }
 
 
 
@@ -226,6 +243,15 @@ namespace Redux.Vulkan
             vkCmdEndRenderPass(handle);
         }
 
+
+        public void BindDescriptorSets(DescriptorSet descriptor)
+        {
+            // Bind descriptor sets describing shader binding points
+            VkDescriptorSet descriptor_set = descriptor._descriptorSet;
+            VkPipelineLayout pipeline_layout = descriptor.PipelineState._pipelineLayout;
+
+            vkCmdBindDescriptorSets(handle, VkPipelineBindPoint.Graphics, pipeline_layout, 0, 1, &descriptor_set, 0, null);
+        }
 
 
 
@@ -253,16 +279,6 @@ namespace Redux.Vulkan
             vkQueueSubmit(NativeDevice.command_queue, 1, &submitInfo, waitFences);
         }
 
-        public void Start()
-        {
-
-            VkCommandBufferBeginInfo cmdBufInfo = new VkCommandBufferBeginInfo()
-            {
-                flags = VkCommandBufferUsageFlags.OneTimeSubmit,
-            };
-            vkBeginCommandBuffer(handle, &cmdBufInfo);
-
-        }
 
         public void End()
         {

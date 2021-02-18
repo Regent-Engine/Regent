@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ShaderCore" Version="1.0.0" />
     <PackageReference Include="Vortice.Vulkan" Version="1.2.170" />
   </ItemGroup>
 

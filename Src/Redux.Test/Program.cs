@@ -8,27 +8,33 @@ namespace Redux.Test
     {
         static void Main(string[] args)
         {
-            Window window = new Window("Redux Engine", 800, 600);
+            Window window = new("Redux Engine", 800, 600);
 
-            Adapter adapter = new();
-            Device device = new(adapter);
+            Settings Settings = new()
+            {
+                VSync = false,
+                Fullscreen = false,
+                Validation = ValidationType.None,
+            };
 
             PresentationParameters parameters = new()
             {
-                Width = window.Width >> 1,
-                Height = window.Height >> 1,
+                Width = window.Width,
+                Height = window.Height,
                 SwapchainSource = window.SwapchainWin32
             };
 
+            Adapter adapter = new(Settings);
+            Device device = new(adapter);
             SwapChain swapChain = new(device, parameters);
-
             Framebuffer framebuffer = new(swapChain);
-            CommandBuffer commandBuffer = new CommandBuffer(device, CommandBufferType.AsyncGraphics);
+            CommandBuffer commandBuffer = new(device, CommandBufferType.AsyncGraphics);
+
 
             window?.Show();
             window.RenderLoop(() => 
             {
-                device.WaitForGPU();
+                device.WaitIdle();
 
                 commandBuffer.Begin(swapChain);
                 commandBuffer.BeginFramebuffer(framebuffer);

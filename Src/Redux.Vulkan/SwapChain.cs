@@ -1,4 +1,12 @@
-﻿using System;
+﻿/* 
+    Copyright (c) 2020 - 2021 Redux Engine. All Rights Reserved. https://github.com/Redux-Engine
+    Copyright (c) Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+
+    This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -33,7 +41,7 @@ namespace Redux.Vulkan
         internal wl_surface* surface;
     }
 
-    public unsafe class SwapChain : Resource, IDisposable
+    public unsafe class SwapChain : GraphicsResource, IDisposable
     {
         private delegate VkResult PFN_vkCreateWin32SurfaceKHRDelegate(VkInstance instance, VkWin32SurfaceCreateInfoKHR* createInfo, VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
         private delegate VkResult PFN_vkCreateXlibSurfaceKHR(VkInstance instance, VkXlibSurfaceCreateInfoKHR* pCreateInfo, VkAllocationCallbacks* pAllocator, VkSurfaceKHR* pSurface);
@@ -54,7 +62,7 @@ namespace Redux.Vulkan
         {
             Parameters = parameters;
 
-            SwapchainSource ??= parameters.SwapchainSource;
+            SwapchainSource = parameters.SwapchainSource;
 
             surface = CreateSurface();
 
@@ -64,18 +72,18 @@ namespace Redux.Vulkan
             CreateBackBuffers();
 
 
-            //DepthStencil = new Texture(device, new TextureDescription
-            //{
-            //    Flags = TextureFlags.DepthStencil,
-            //    Usage = GraphicsResourceUsage.Default,
-            //    Width = Parameters.BackBufferWidth,
-            //    Height = Parameters.BackBufferHeight,
-            //});
+            DepthStencil = new Image(device, new ImageDescription
+            {
+                Flags = TextureFlags.DepthStencil,
+                Usage = GraphicsResourceUsage.Default,
+                Width = Parameters.Width,
+                Height = Parameters.Height,
+            });
         }
 
         public PresentationParameters Parameters { get; set; }
         public PixelFormat ColorFormat { get; private set; }
-        //public Texture DepthStencil { get; private set; }
+        public Image DepthStencil { get; private set; }
         public SwapchainSource SwapchainSource { get; set; }
 
 
@@ -115,7 +123,7 @@ namespace Redux.Vulkan
 
         internal VkSurfaceKHR CreateSurface()
         {
-            VkInstance instance = this.NativeDevice.NativeAdapter.instance;
+            VkInstance instance = NativeDevice.NativeAdapter.instance;
             VkSurfaceKHR surface = 0;
 
             PFN_vkCreateWin32SurfaceKHRDelegate vkCreateWin32SurfaceKHR = NativeDevice.GetInstanceProcAddr<PFN_vkCreateWin32SurfaceKHRDelegate>("vkCreateWin32SurfaceKHR");
@@ -431,7 +439,7 @@ namespace Redux.Vulkan
             {
                 sType = VkStructureType.SwapchainCreateInfoKHR,
                 pNext = null,
-
+                
                 surface = surface,
                 minImageCount = desiredNumberOfSwapchainImages,
                 imageFormat = color_format,
@@ -523,4 +531,5 @@ namespace Redux.Vulkan
             vkDestroySurfaceKHR(NativeDevice.NativeAdapter.instance, surface, null);
         }
     }
+
 }

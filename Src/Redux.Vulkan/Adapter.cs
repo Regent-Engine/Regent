@@ -1,13 +1,22 @@
-﻿using System;
+﻿/* 
+    Copyright (c) 2020 - 2021 Redux Engine. All Rights Reserved. https://github.com/Redux-Engine
+    Copyright (c) Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+
+    This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Vortice.Vulkan;
+using Redux.Core;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Redux.Vulkan
 {
-    public unsafe class Adapter
+    public unsafe class Adapter : IDisposable
     {
         internal bool? _supportInitializad;
         internal VkInstance instance;
@@ -28,10 +37,54 @@ namespace Redux.Vulkan
 
 
 
-        public Adapter()
+
+
+        public Adapter(Settings settings)
         {
             Recreate();
+            Settings = settings;
         }
+
+
+        public Version EngineVersion { get; internal set; } = new Version(1, 2, 155);
+
+        public PresentationParameters Parameters { get; set; }
+
+        public List<string> InstanceExtensionsNames { get; private set; } = new();
+
+        public List<string> ValidationLayer { get; private set; } = new();
+
+
+        public DeviceType DeviceType => (DeviceType)device_properties.deviceType;
+
+        public uint VendorId => device_properties.vendorID;
+
+        public bool Validation = false;
+
+        public bool RayTracingSupport => false;
+
+        public float TimestampPeriod => device_properties.limits.timestampPeriod;
+
+        public uint MaxDrawIndirectCount => device_properties.limits.maxDrawIndirectCount;
+
+        public MultisampleCount MultisampleCount => (MultisampleCount)Tools.ExtractMaxSampleCount(device_properties); // TODO: MultisampleCount.ToVkSampleCountFlags
+
+        public bool SupportsPhysicalDeviceProperties2 { get; private set; }
+
+        public bool SupportsSurface { get; private set; }
+
+        public bool SupportsWin32Surface { get; private set; }
+        public bool SupportsWaylandSurface { get; private set; }
+        public bool SupportsMacOSSurface { get; private set; }
+        public bool SupportsX11Surface { get; private set; }
+        public bool SupportsAndroidSurface { get; private set; }
+
+        public bool SupportsExternal { get; private set; }
+
+        public bool SupportsVulkan11Instance { get; private set; }
+        public bool SupportsVulkan11Device { get; private set; }
+
+
 
 
         public string DeviceName
@@ -52,16 +105,12 @@ namespace Redux.Vulkan
             }
         }
 
-        public uint VendorId => device_properties.vendorID;
+        public Settings Settings { get; }
 
-        public List<string> InstanceExtensionsNames { get; private set; } = new();
-
-        public List<string> ValidationLayer { get; private set; } = new();
-
-        public bool SupportsVulkan11Instance { get; private set; }
-        public bool SupportsVulkan11Device { get; private set; }
-        public bool SupportsPhysicalDeviceProperties2 { get; private set; }
-        public bool SupportsWin32Surface { get; private set; }
+        public IntPtr GetInstance()
+        {
+            return instance.Handle;
+        }
 
         public bool IsSupported()
         {
@@ -80,7 +129,6 @@ namespace Redux.Vulkan
                 return false;
             }
         }
-
 
 
         public void Recreate()
@@ -104,15 +152,10 @@ namespace Redux.Vulkan
             SupportsVulkan11Instance = vkEnumerateInstanceVersion() >= VkVersion.Version_1_1;
 
 
-            if (device_properties.apiVersion >= VkVersion.Version_1_1)
+            if (device_properties.apiVersion >= VkVersion.Version_1_1) 
                 SupportsVulkan11Device = SupportsVulkan11Instance;
-
         }
 
-        internal void CreatePhysicalDeviceProperties()
-        {
-            vkGetPhysicalDeviceProperties(handle, out device_properties);
-        }
 
         internal void device_extension()
         {
@@ -148,13 +191,13 @@ namespace Redux.Vulkan
                 if (instance_extensions_names.Contains("VK_MVK_macos_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_MVK_macos_surface");
-                    //SupportsMacOSSurface = true;
+                    SupportsMacOSSurface = true;
                 }
 
                 if (instance_extensions_names.Contains("VK_MVK_ios_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_MVK_ios_surface");
-                    //SupportsMacOSSurface = true;
+                    SupportsMacOSSurface = true;
                 }
             }
 
@@ -163,26 +206,26 @@ namespace Redux.Vulkan
                 if (instance_extensions_names.Contains("VK_KHR_android_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_android_surface");
-                    //SupportsAndroidSurface = true;
+                    SupportsAndroidSurface = true;
                 }
 
                 if (instance_extensions_names.Contains("VK_KHR_xlib_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_xlib_surface");
-                    //SupportsX11Surface = true;
+                    SupportsX11Surface = true;
                 }
 
                 if (instance_extensions_names.Contains("VK_KHR_wayland_surface"))
                 {
                     InstanceExtensionsNames.Add("VK_KHR_wayland_surface");
-                    //SupportsWaylandSurface = true;
+                    SupportsWaylandSurface = true;
                 }
             }
 
             if (instance_extensions_names.Contains("VK_KHR_surface"))
             {
                 InstanceExtensionsNames.Add("VK_KHR_surface");
-                //SupportsSurface = true;
+                SupportsSurface = true;
             }
 
             if (instance_extensions_names.Contains("VK_KHR_get_physical_device_properties2"))
@@ -190,6 +233,18 @@ namespace Redux.Vulkan
                 InstanceExtensionsNames.Add("VK_KHR_get_physical_device_properties2");
                 SupportsPhysicalDeviceProperties2 = true;
             }
+
+
+            if (SupportsPhysicalDeviceProperties2 && 
+                instance_extensions_names.Contains("VK_KHR_external_memory_capabilities") && 
+                instance_extensions_names.Contains("VK_KHR_external_semaphore_capabilities"))
+            {
+                InstanceExtensionsNames.Add("VK_KHR_external_memory_capabilities");
+                InstanceExtensionsNames.Add("VK_KHR_external_semaphore_capabilities");
+                SupportsExternal = true;
+            }
+
+
         }
 
         internal void CreateInstance(string[] extensions)
@@ -201,7 +256,7 @@ namespace Redux.Vulkan
                 pNext = null,
                 apiVersion = new VkVersion(1, 0, 0),
                 applicationVersion = new VkVersion(0, 0, 1),
-                engineVersion = new VkVersion(),
+                engineVersion = new VkVersion(EngineVersion.Major, EngineVersion.Minor, EngineVersion.Patch),
             };
 
 
@@ -213,6 +268,7 @@ namespace Redux.Vulkan
 
             VkStringArray string_array = new VkStringArray(extensions);
 
+
             VkInstanceCreateInfo inst_info = new()
             {
                 sType = VkStructureType.InstanceCreateInfo,
@@ -220,7 +276,7 @@ namespace Redux.Vulkan
                 flags = VkInstanceCreateFlags.None,
                 pApplicationInfo = &app_info,
                 ppEnabledExtensionNames = string_array,
-                enabledExtensionCount = string_array.Length,
+                enabledExtensionCount = (uint)extensions.Length,
             };
 
             VkDebugUtilsMessengerCreateInfoEXT debugUtilsCreateInfo = new()
@@ -231,16 +287,16 @@ namespace Redux.Vulkan
                 pUserData = null,
                 messageSeverity = VkDebugUtilsMessageSeverityFlagsEXT.Error | VkDebugUtilsMessageSeverityFlagsEXT.Warning | VkDebugUtilsMessageSeverityFlagsEXT.Info,
                 messageType = VkDebugUtilsMessageTypeFlagsEXT.Validation | VkDebugUtilsMessageTypeFlagsEXT.Performance,
-                //pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
+                pfnUserCallback = Interop.GetFunctionPointerForDelegate(_debugMessengerCallbackFunc = DebugMessengerCallback),
             };
-            // TODO: DebugMessengerCallback
-            if (false)
-            {
-                inst_info.pNext = &debugUtilsCreateInfo;
-                //inst_info.ppEnabledLayerNames = Interop.String.AllocToPointers(layers);
-                inst_info.enabledLayerCount = (uint)layers.Length;
 
-            }
+            //if (Validation)
+            //{
+            //    inst_info.pNext = &debugUtilsCreateInfo;
+            //    inst_info.ppEnabledLayerNames = Interop.String.AllocToPointers(layers);
+            //    inst_info.enabledLayerCount = (uint)layers.Length;
+
+            //}
 
             vkCreateInstance(&inst_info, null, out instance);
             vkLoadInstance(instance);
@@ -263,7 +319,7 @@ namespace Redux.Vulkan
 
             handles = new VkPhysicalDevice[device_count];
 
-            if (device_count >= 1)
+            if (device_count >= 1 )
                 handle = physicalDevicesptr[0];
 
             for (int i = 0; i < device_count; i++)
@@ -324,6 +380,88 @@ namespace Redux.Vulkan
             return depthFormat;
         }
 
+
+        public PixelFormat GetSupportedDepthFormat(IEnumerable<PixelFormat> depthFormats)
+        {
+            // Since all depth formats may be optional, we need to find a suitable depth format to use
+            // Start with the highest precision packed format
+
+            PixelFormat depthFormat = PixelFormat.Undefined;
+
+            foreach (PixelFormat format in depthFormats)
+            {
+                vkGetPhysicalDeviceFormatProperties(handle, (VkFormat)format, out VkFormatProperties formatProps);
+
+                // Format must support depth stencil attachment for optimal tiling
+                if ((formatProps.optimalTilingFeatures & VkFormatFeatureFlags.DepthStencilAttachment) is not 0)
+                {
+                    depthFormat = format;
+                }
+            }
+
+
+
+            return depthFormat;
+        }
+
+
+
+        internal VkBool32 DebugMessengerCallback(VkDebugUtilsMessageSeverityFlagsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageTypes, VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, IntPtr userData)
+        {
+            string message = Interop.GetString(pCallbackData->pMessage);
+
+            if (messageTypes is VkDebugUtilsMessageTypeFlagsEXT.Validation)
+            {
+                if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
+                {
+                    
+                    //if (Validation)
+                    //    foreach (var l in Log)
+                    //        l.Error("Vulkan", $"Validation: {messageSeverity} - {message}");
+
+                }
+                else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+                {
+                    //if (Validation)
+                    //    foreach (var l in Log)
+                    //        l.Warn($"[Vulkan]: Validation: {messageSeverity} - {message}");
+                }
+
+            }
+            else
+            {
+                if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Error)
+                {
+                    //if (Validation)
+                    //    foreach (var l in Log)
+                    //        l.Error("Vulkan", $"[Vulkan]: {messageSeverity} - {message}");
+                }
+                else if (messageSeverity is VkDebugUtilsMessageSeverityFlagsEXT.Warning)
+                {
+                    //if (Validation)
+                    //    foreach (var l in Log)
+                    //        l.Warn($"[Vulkan]: {messageSeverity} - {message}");
+                }
+
+                //foreach (var l in Log)
+                //    l.WriteLine($"[Vulkan]: {messageSeverity} - {message}");
+            }
+
+            return VkBool32.False;
+        }
+
+
+
+
+
+        internal void CreatePhysicalDeviceProperties()
+        {
+            vkGetPhysicalDeviceProperties(handle, out device_properties);
+        }
+
+
+
+
         internal string VendorNameString(uint vendorId)
         {
             switch (vendorId)
@@ -349,6 +487,19 @@ namespace Redux.Vulkan
                 default:
                     return "Unknown";
             }
+        }
+
+
+
+
+
+
+        public void Dispose()
+        {
+            if (_debugMessenger != VkDebugUtilsMessengerEXT.Null)
+                vkDestroyDebugUtilsMessengerEXT(instance, _debugMessenger, null);
+
+            vkDestroyInstance(instance, null);
         }
     }
 }

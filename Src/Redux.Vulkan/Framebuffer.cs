@@ -1,11 +1,19 @@
-﻿using Vortice.Vulkan;
+﻿/* 
+    Copyright (c) 2020 - 2021 Redux Engine. All Rights Reserved. https://github.com/Redux-Engine
+    Copyright (c) Faber Leonardo. All Rights Reserved. https://github.com/FaberSanZ
+
+    This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+
+
+using Vortice.Vulkan;
 using static Vortice.Vulkan.Vulkan;
 
 namespace Redux.Vulkan
 {
-    // TODO: Framebuffer
 
-    public unsafe class Framebuffer : Resource
+    public unsafe class Framebuffer : GraphicsResource
     {
 
 
@@ -36,10 +44,10 @@ namespace Redux.Vulkan
             for (uint i = 0; i < SwapChainImageViews.Length; i++)
             {
 
-                VkImageView* attachments = stackalloc VkImageView[1]
+                VkImageView* attachments = stackalloc VkImageView[2]
                 {
                     SwapChainImageViews[i],                                 // Color attachment is the view of the swapchain image			
-                    //SwapChain.DepthStencil.depth_stencil_view,
+                    SwapChain.DepthStencil.depth_stencil_view,
                 };
 
 
@@ -49,7 +57,7 @@ namespace Redux.Vulkan
                     pNext = null,
                     flags = VkFramebufferCreateFlags.None, // TODO: VkFramebufferCreateFlags
                     renderPass = renderPass,
-                    attachmentCount = 1,
+                    attachmentCount = 2,
                     pAttachments = attachments,
                     width = (uint)SwapChain.Parameters.Width,
                     height = (uint)SwapChain.Parameters.Height,
@@ -65,11 +73,11 @@ namespace Redux.Vulkan
         internal void CreateRenderPass()
         {
             VkFormat color_format = SwapChain.color_format;
-            //VkFormat depth_format = SwapChain.DepthStencil.format;
+            VkFormat depth_format = SwapChain.DepthStencil.format;
 
 
             // Descriptors for the attachments used by this renderpass
-            VkAttachmentDescription* attachments = stackalloc VkAttachmentDescription[1]
+            VkAttachmentDescription* attachments = stackalloc VkAttachmentDescription[2]
             {
                 // Color attachment
                 new VkAttachmentDescription
@@ -91,17 +99,17 @@ namespace Redux.Vulkan
                 // Depth attachment
                 // A proper depth format is selected in the example base
 
-                //new VkAttachmentDescription
-                //{
-                //    format = depth_format,                                           // A proper depth format is selected in the example base
-                //    samples = VkSampleCountFlags.Count1,
-                //    loadOp = VkAttachmentLoadOp.Clear,                               // Clear depth at start of first subpass
-                //    storeOp = VkAttachmentStoreOp.DontCare,                          // We don't need depth after render pass has finished (DONT_CARE may result in better performance)
-                //    stencilLoadOp = VkAttachmentLoadOp.DontCare,                     // No stencil
-                //    stencilStoreOp = VkAttachmentStoreOp.DontCare,                   // No Stencil
-                //    initialLayout = VkImageLayout.Undefined,                         // Layout at render pass start. Initial doesn't matter, so we use undefined
-                //    finalLayout = VkImageLayout.ColorAttachmentOptimal               // Transition to depth/stencil attachment
-                //},
+                new VkAttachmentDescription
+                {
+                    format = depth_format,                                           // A proper depth format is selected in the example base
+                    samples = VkSampleCountFlags.Count1,
+                    loadOp = VkAttachmentLoadOp.Clear,                               // Clear depth at start of first subpass
+                    storeOp = VkAttachmentStoreOp.DontCare,                          // We don't need depth after render pass has finished (DONT_CARE may result in better performance)
+                    stencilLoadOp = VkAttachmentLoadOp.DontCare,                     // No stencil
+                    stencilStoreOp = VkAttachmentStoreOp.DontCare,                   // No Stencil
+                    initialLayout = VkImageLayout.Undefined,                         // Layout at render pass start. Initial doesn't matter, so we use undefined
+                    finalLayout = VkImageLayout.ColorAttachmentOptimal               // Transition to depth/stencil attachment
+                },
 
             };
 
@@ -117,11 +125,11 @@ namespace Redux.Vulkan
             };
 
 
-            //VkAttachmentReference depthReference = new VkAttachmentReference
-            //{
-            //    attachment = 1,                                                             // Attachment 1 is color
-            //    layout = VkImageLayout.DepthStencilAttachmentOptimal                        // Attachment used as depth/stemcil used during the subpass
-            //};
+            VkAttachmentReference depthReference = new VkAttachmentReference
+            {
+                attachment = 1,                                                             // Attachment 1 is color
+                layout = VkImageLayout.DepthStencilAttachmentOptimal                        // Attachment used as depth/stemcil used during the subpass
+            };
 
 
             // Setup a single subpass reference
@@ -132,7 +140,7 @@ namespace Redux.Vulkan
                     pipelineBindPoint = VkPipelineBindPoint.Graphics,
                     colorAttachmentCount = 1,                                                   // Subpass uses one color attachment
                     pColorAttachments = colorReferences,                                        // Reference to the color attachment in slot 0
-                    //pDepthStencilAttachment = &depthReference,                                  // Reference to the depth attachment in slot 1
+                    pDepthStencilAttachment = &depthReference,                                  // Reference to the depth attachment in slot 1
                     inputAttachmentCount = 0,                                                   // Input attachments can be used to sample from contents of a previous subpass
                     pInputAttachments = null,                                                   // (Input attachments not used by this example)
                     preserveAttachmentCount = 0,                                                // Preserved attachments can be used to loop (and preserve) attachments through subpasses
@@ -184,7 +192,7 @@ namespace Redux.Vulkan
             VkRenderPassCreateInfo render_pass_info = new VkRenderPassCreateInfo()
             {
                 sType = VkStructureType.RenderPassCreateInfo,
-                attachmentCount = 1,                                             // Number of attachments used by this render pass
+                attachmentCount = 2,                                             // Number of attachments used by this render pass
                 pAttachments = attachments,                                      // Descriptions of the attachments used by the render pass
                 subpassCount = 1,                                                // We only use one subpass in this example
                 pSubpasses = *&subpass_description,                              // Description of that subpass
