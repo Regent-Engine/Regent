@@ -20,14 +20,6 @@ namespace Redux
 
         }
 
-        //public string L
-        //{
-        //    get => GetValue(LProperty);
-        //    set => SetValue(LProperty, value);
-        //}
-
-        //public static readonly ReduxProperty<ReduxObject, string> LProperty = ReduxPropertyRegister.Register<ReduxObject, string>("L");
-
 
         public TValue GetValue<TValue>(ReduxProperty<ReduxObject, TValue> reduxProperty)
         {
