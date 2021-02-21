@@ -1,5 +1,4 @@
-﻿using Redux.Attributes;
-using Redux.Data;
+﻿using Redux.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,32 +20,43 @@ namespace Redux
         }
 
 
-        public TValue GetValue<TValue>(ReduxProperty<ReduxObject, TValue> reduxProperty)
+        public TValue GetValue<TValue>(ReduxProperty<TValue> reduxProperty)
         {
-            return (TValue)propertyValues[reduxProperty.Name];
+            if (propertyValues.ContainsKey(reduxProperty.Name))
+            {
+                return (TValue)propertyValues[reduxProperty.Name];
+            }
+            else if(reduxProperty.DefaultValue != null)
+            {
+                return reduxProperty.DefaultValue;
+            }
+            else
+            {
+                return default;
+            }
         }
 
-        public void SetValue<TValue>(ReduxProperty<ReduxObject, TValue> reduxProperty, TValue value)
+        public void SetValue<TValue>(ReduxProperty<TValue> reduxProperty, TValue value)
         {
             if (propertyValues.ContainsKey(reduxProperty.Name))
             {
                 var oldValue = (TValue)propertyValues[reduxProperty.Name];
-
-                OnPropertyChanged<TValue>(new ReduxPropertyChangedEventArgs<TValue>(reduxProperty.Name, oldValue, value));
-
+                reduxProperty.RaisePropertyChanged(this, new ReduxPropertyChangedEventArgs<TValue>(reduxProperty.Name, this, oldValue, value, reduxProperty));
+                OnPropertyChanged<TValue>(new ReduxPropertyChangedEventArgs<TValue>(reduxProperty.Name, this, oldValue, value, reduxProperty));
                 propertyValues[reduxProperty.Name] = value;
             }
             else if (!propertyValues.ContainsKey(reduxProperty.Name))
             {
-                OnPropertyChanged<TValue>(new ReduxPropertyChangedEventArgs<TValue>(reduxProperty.Name, default, value));
-
+                var oldValue = default(TValue);
+                reduxProperty.RaisePropertyChanged(this, new ReduxPropertyChangedEventArgs<TValue>(reduxProperty.Name, this, oldValue, value, reduxProperty));
+                OnPropertyChanged<TValue>(new ReduxPropertyChangedEventArgs<TValue>(reduxProperty.Name, this, default, value, reduxProperty));
                 propertyValues.Add(reduxProperty.Name, value);
             }
         }
 
         protected virtual void OnPropertyChanged<T>(ReduxPropertyChangedEventArgs<T> e)
         {
-            PropertyChanged.Invoke(this, new ReduxPropertyChangedEventArgs(e.Name, e.OldValue, e.NewValue));
+            PropertyChanged?.Invoke(this, e);
         }
     }
 }
