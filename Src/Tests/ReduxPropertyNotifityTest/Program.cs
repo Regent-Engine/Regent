@@ -11,7 +11,7 @@ namespace ReduxPropertyNotifityTest
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main(string[] args) 
         {
             TestObject obj = new();
             TestObject.TitleProperty.Changed += (s, e) =>
