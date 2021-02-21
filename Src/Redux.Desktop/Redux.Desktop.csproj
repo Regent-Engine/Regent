@@ -17,4 +17,5 @@
     <ProjectReference Include="..\Redux.Core\Redux.Core.csproj" />
   </ItemGroup>
 
+  <Import Project="../base.props"/>
 </Project>

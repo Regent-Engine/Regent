@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Redux.Base\Redux.Base.csproj" />
+    <ProjectReference Include="..\Redux.Media\Redux.Media.csproj" />
+  </ItemGroup>
   <Import Project="../base.props"/>
 
 </Project>
