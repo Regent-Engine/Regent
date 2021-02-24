@@ -20,9 +20,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Core", "Redux.Core\Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Desktop", "Redux.Desktop\Redux.Desktop.csproj", "{31C1C29F-4C73-4058-91E8-892B945DDD99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redux.Components", "Redux.Components\Redux.Components.csproj", "{BDA03127-26FD-4C44-9759-05AB88B1E36B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Components", "Redux.Components\Redux.Components.csproj", "{BDA03127-26FD-4C44-9759-05AB88B1E36B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Redux.Visuals", "Redux.Visuals\Redux.Visuals.csproj", "{3198E959-E010-41D6-99BA-B3023C661B5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redux.Visuals", "Redux.Visuals\Redux.Visuals.csproj", "{3198E959-E010-41D6-99BA-B3023C661B5C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{09BEED89-DEBB-4087-93EF-640F9E50D966}"
 	ProjectSection(SolutionItems) = preProject
@@ -32,6 +32,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BE509E07-806C-4CD5-956B-0B57F9E0F60F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReduxPropertyNotifityTest", "Tests\ReduxPropertyNotifityTest\ReduxPropertyNotifityTest.csproj", "{A52CAD0B-1664-4DE3-8EFF-78CDCE0011E4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ShaderC", "ShaderC", "{B6A62A05-081E-48CE-AC88-22A3941D4CC1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shaderc", "Shaderc\Src\Shaderc\Shaderc.csproj", "{21D0CB14-4175-4B30-AEDD-DF8E8FF36AAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,12 +79,17 @@ Global
 		{A52CAD0B-1664-4DE3-8EFF-78CDCE0011E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A52CAD0B-1664-4DE3-8EFF-78CDCE0011E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A52CAD0B-1664-4DE3-8EFF-78CDCE0011E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21D0CB14-4175-4B30-AEDD-DF8E8FF36AAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21D0CB14-4175-4B30-AEDD-DF8E8FF36AAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21D0CB14-4175-4B30-AEDD-DF8E8FF36AAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21D0CB14-4175-4B30-AEDD-DF8E8FF36AAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A52CAD0B-1664-4DE3-8EFF-78CDCE0011E4} = {BE509E07-806C-4CD5-956B-0B57F9E0F60F}
+		{21D0CB14-4175-4B30-AEDD-DF8E8FF36AAB} = {B6A62A05-081E-48CE-AC88-22A3941D4CC1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49123765-3538-49AD-99EF-CDFA83DFBBCD}

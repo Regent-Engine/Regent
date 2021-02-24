@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-  <Import Project="../base.props"/>
+  <Import Project="../base.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\Redux.Vulkan\Redux.Vulkan.csproj" />
+  </ItemGroup>
 
 </Project>

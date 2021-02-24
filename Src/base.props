@@ -2,5 +2,6 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <LangVersion>9.0</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 </Project>

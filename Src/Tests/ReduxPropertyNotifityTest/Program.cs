@@ -34,7 +34,6 @@ namespace ReduxPropertyNotifityTest
                     obj.Title = "title random";
                 }
             }
-            Console.WriteLine("Hello World!");
         }
     }
 
@@ -47,6 +46,6 @@ namespace ReduxPropertyNotifityTest
         }
 
         public static readonly ReduxProperty<string> TitleProperty 
-            = ReduxPropertyRegister.Register<string>(nameof(Title), "Hello World!");
+            = ReduxPropertyRegister.Register(nameof(Title), "Hello World!");
     }
 }

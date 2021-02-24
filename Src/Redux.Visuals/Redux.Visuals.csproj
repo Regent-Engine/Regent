@@ -7,7 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Redux.Base\Redux.Base.csproj" />
     <ProjectReference Include="..\Redux.Media\Redux.Media.csproj" />
+    <ProjectReference Include="..\Redux.Vulkan\Redux.Vulkan.csproj" />
   </ItemGroup>
-  <Import Project="../base.props"/>
+  <Import Project="../base.props" />
 
 </Project>

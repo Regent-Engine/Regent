@@ -4,27 +4,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ShaderCore" Version="1.0.0" />
     <PackageReference Include="Vortice.Vulkan" Version="1.2.170" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Redux.Core\Redux.Core.csproj" />
+    <ProjectReference Include="..\Shaderc\Src\Shaderc\Shaderc.csproj" />
   </ItemGroup>
 
-  <Import Project="../base.props"/>
+  <Import Project="../base.props" />
 
 </Project>

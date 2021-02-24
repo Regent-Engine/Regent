@@ -3,15 +3,16 @@
     Copyright (c) Piero Castillo. All Rights Reserved. https://github.com/PieroCastillo
     This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
+using Redux.Media.Modeling;
 using System;
-using Redux;
-using Redux.Media.Rendering;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Redux.Visuals
+namespace Redux.Media.Rendering
 {
-    public class Visual : ReduxObject
+    public class RenderContext
     {
-        public virtual void Render(RenderContext context)
+        public void DrawModel(Redux3DModel redux3DModel)
         {
 
         }
