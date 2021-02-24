@@ -7,5 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Redux.Vulkan\Redux.Vulkan.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Materialing\" />
+  </ItemGroup>
 
 </Project>
